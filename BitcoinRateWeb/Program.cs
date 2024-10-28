@@ -1,5 +1,6 @@
 using BitcoinRateWeb.Components;
 using BitcoinRateWeb.Services;
+using BitcoinRateWeb.Settings;
 
 namespace BitcoinRateWeb
 {
@@ -14,6 +15,7 @@ namespace BitcoinRateWeb
             builder.Services.AddRazorComponents()
                 .AddInteractiveServerComponents();
 
+            services.Configure<BitcoinSettings>(builder.Configuration.GetSection("BitcoinSettings"));
             services.AddSingleton<BitcoinService>();
             services.AddSingleton<CurrencyConversionProviderViaCnbService>();
             services.AddSingleton<HttpClient>();
