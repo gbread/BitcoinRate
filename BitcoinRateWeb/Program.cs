@@ -1,5 +1,6 @@
 using BitcoinRateWeb.Components;
 using BitcoinRateWeb.DAL;
+using BitcoinRateWeb.Middleware;
 using BitcoinRateWeb.Services;
 using BitcoinRateWeb.Settings;
 using Microsoft.EntityFrameworkCore;
@@ -30,6 +31,8 @@ namespace BitcoinRateWeb
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             var app = builder.Build();
+
+            app.UseMiddleware<ExceptionHandlingMiddleware>();
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())

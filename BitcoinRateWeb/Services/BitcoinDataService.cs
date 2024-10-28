@@ -30,9 +30,16 @@ namespace BitcoinRateWeb.Services
 
         private async void UpdateBitcoinData(object state)
         {
-            LastResponse = await _bitcoinService.GetBitcoinPriceInCZKAsync();
-            _logger.Log(LogLevel.Debug, "Downloaded bitcoin rates: {LastResponse}", LastResponse);
-            OnBitcoinDataUpdated?.Invoke(LastResponse);
+            try
+            {
+                LastResponse = await _bitcoinService.GetBitcoinPriceInCZKAsync();
+                _logger.Log(LogLevel.Debug, "Downloaded bitcoin rates: {LastResponse}", LastResponse);
+                OnBitcoinDataUpdated?.Invoke(LastResponse);
+            }
+            catch (Exception ex)
+            {
+                _logger.Log(LogLevel.Error, ex, "Error in bitcoin rates download: No data downloaded");
+            }
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
