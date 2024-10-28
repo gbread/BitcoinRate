@@ -14,9 +14,11 @@ namespace BitcoinRateWeb
             builder.Services.AddRazorComponents()
                 .AddInteractiveServerComponents();
 
-            services.AddScoped<BitcoinService>();
-            services.AddScoped<CurrencyConversionProviderViaCnbService>();
-            services.AddHttpClient();
+            services.AddSingleton<BitcoinService>();
+            services.AddSingleton<CurrencyConversionProviderViaCnbService>();
+            services.AddSingleton<HttpClient>();
+            services.AddSingleton<BitcoinDataService>();
+            services.AddHostedService(provider => provider.GetRequiredService<BitcoinDataService>());
 
             var app = builder.Build();
 
