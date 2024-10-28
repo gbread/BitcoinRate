@@ -6,7 +6,7 @@
 @inject BitcoinStoredPriceService BitcoinPriceService
 
 <h3>Saved Bitcoin Prices</h3>
-
+<button class="btn btn-primary" @onclick="@(() => SaveNotes())">Save Notes</button>
 <table class="table">
     <thead>
         <tr>
@@ -48,5 +48,10 @@
     {
         await BitcoinPriceService.DeleteAsync(price);
         bitcoinPrices = await BitcoinPriceService.GetAllAsync();
+    }
+
+    private async Task SaveNotes()
+    {
+        await BitcoinPriceService.UpdateAsync(bitcoinPrices);
     }
 }
