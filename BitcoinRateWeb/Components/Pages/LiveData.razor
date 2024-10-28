@@ -1,0 +1,18 @@
+﻿@page "/live-data"
+@using BitcoinRateWeb.Services
+
+@inject BitcoinService bitcoinService
+
+<h3>Live Bitcoin Price in CZK</h3>
+
+<p>Current BTC Price in CZK: @bitcoinPriceInCZK</p>
+
+@code {
+    private decimal bitcoinPriceInCZK;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var bitCoinRate = await bitcoinService.GetBitcoinPriceInCZKAsync();
+        bitcoinPriceInCZK = bitCoinRate.BtcToCzk;
+    }
+}

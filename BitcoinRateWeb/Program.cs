@@ -1,4 +1,5 @@
 using BitcoinRateWeb.Components;
+using BitcoinRateWeb.Services;
 
 namespace BitcoinRateWeb
 {
@@ -7,10 +8,15 @@ namespace BitcoinRateWeb
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            var services = builder.Services;
 
             // Add services to the container.
             builder.Services.AddRazorComponents()
                 .AddInteractiveServerComponents();
+
+            services.AddScoped<BitcoinService>();
+            services.AddScoped<CurrencyConversionProviderViaCnbService>();
+            services.AddHttpClient();
 
             var app = builder.Build();
 
