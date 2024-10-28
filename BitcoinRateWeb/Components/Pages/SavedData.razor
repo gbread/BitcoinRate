@@ -1,0 +1,52 @@
+﻿@page "/saved-data"
+@rendermode InteractiveServer
+
+@using BitcoinRateWeb.Models
+@using BitcoinRateWeb.DAL
+@inject BitcoinStoredPriceService BitcoinPriceService
+
+<h3>Saved Bitcoin Prices</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Timestamp</th>
+            <th>BTC to EUR</th>
+            <th>BTC to CZK</th>
+            <th>Note</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var price in bitcoinPrices)
+        {
+            <tr>
+                <td>@price.Timestamp.ToString("g")</td>
+                <td>@price.BtcToEur</td>
+                <td>@price.BtcToCzk</td>
+                <td>
+                    <input @bind="price.Note" />
+                </td>
+                <td>
+                    <button @onclick="@(() => DeletePrice(price))">Delete</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+@code {
+    private List<BitcoinPrice> bitcoinPrices = new List<BitcoinPrice>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        bitcoinPrices = await BitcoinPriceService.GetAllAsync();
+    }
+
+    private async Task DeletePrice(BitcoinPrice price)
+    {
+        await BitcoinPriceService.DeleteAsync(price);
+        bitcoinPrices = await BitcoinPriceService.GetAllAsync();
+    }
+}

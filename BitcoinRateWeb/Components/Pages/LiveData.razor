@@ -3,6 +3,8 @@
 
 <h3>Live Bitcoin Prices</h3>
 
+<button class="btn btn-primary" @onclick="SaveToDatabase">Save All Records</button>
+
 <table class="table">
     <thead>
         <tr>
@@ -12,33 +14,55 @@
         </tr>
     </thead>
     <tbody>
-        <tr>
-            <td>@bitcoinData?.Timestamp.ToString("g")</td>
-            <td>@bitcoinData?.BtcToEur</td>
-            <td>@bitcoinData?.BtcToCzk</td>
-        </tr>
+        @foreach (var bitcounData in bitcoinDataList)
+        {
+            <tr>
+                <td>@bitcounData.Timestamp.ToString("g")</td>
+                <td>@bitcounData.BtcToEur</td>
+                <td>@bitcounData.BtcToCzk</td>
+            </tr>
+        }
     </tbody>
 </table>
 
+
+
+@using BitcoinRateWeb.DAL
+@using BitcoinRateWeb.Models
 @using BitcoinRateWeb.Services
 
 @inject BitcoinDataService bitcoinService
+@inject BitcoinStoredPriceService bitcoinStoredPricesService
 
 @code {
-    private BitcoinService.BitcoinServiceResponse bitcoinData = null;
+    private List<BitcoinService.BitcoinServiceResponse> bitcoinDataList = new();
 
     protected override async Task OnInitializedAsync()
     {
         bitcoinService.OnBitcoinDataUpdated += HandleBitcoinDataUpdate;
-        bitcoinData = bitcoinService.LastResponse;
+        bitcoinDataList.Add(bitcoinService.LastResponse);
     }
 
     private void HandleBitcoinDataUpdate(BitcoinService.BitcoinServiceResponse data)
     {
-        bitcoinData = data;
+        bitcoinDataList.Add(data);
         InvokeAsync(StateHasChanged);
     }
 
+    private async Task SaveToDatabase()
+    {
+        var newEntities = bitcoinDataList.Select(bitcoinData =>
+             new BitcoinPrice
+                 {
+                     Timestamp = bitcoinData.Timestamp,
+                     BtcToEur = bitcoinData.BtcToEur,
+                     BtcToCzk = bitcoinData.BtcToCzk,
+                     Note = string.Empty
+                 }
+        );
+
+        await bitcoinStoredPricesService.AddAsync(newEntities);
+    }
 
     public void Dispose()
     {

@@ -1,6 +1,8 @@
 using BitcoinRateWeb.Components;
+using BitcoinRateWeb.DAL;
 using BitcoinRateWeb.Services;
 using BitcoinRateWeb.Settings;
+using Microsoft.EntityFrameworkCore;
 
 namespace BitcoinRateWeb
 {
@@ -21,6 +23,11 @@ namespace BitcoinRateWeb
             services.AddSingleton<HttpClient>();
             services.AddSingleton<BitcoinDataService>();
             services.AddHostedService(provider => provider.GetRequiredService<BitcoinDataService>());
+            services.AddScoped<BitcoinStoredPriceService>();
+
+            // Configure the DbContext for Entity Framework
+            services.AddDbContext<BitcoinDataContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             var app = builder.Build();
 
