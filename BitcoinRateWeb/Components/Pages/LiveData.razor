@@ -40,7 +40,9 @@
     protected override async Task OnInitializedAsync()
     {
         bitcoinService.OnBitcoinDataUpdated += HandleBitcoinDataUpdate;
-        bitcoinDataList.Add(bitcoinService.LastResponse);
+        if (bitcoinService.LastResponse != null) {
+            bitcoinDataList.Add(bitcoinService.LastResponse);
+        }
     }
 
     private void HandleBitcoinDataUpdate(BitcoinService.BitcoinServiceResponse data)
