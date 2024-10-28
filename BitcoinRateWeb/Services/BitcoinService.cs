@@ -35,7 +35,7 @@ namespace BitcoinRateWeb.Services
             public Bpi bpi { get; set; }
         }
 
-        public class BitcoinServiceResponse
+        public record BitcoinServiceResponse
         {
             public DateTime Timestamp { get; set; }
             public decimal BtcToEur { get; set; }

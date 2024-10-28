@@ -1,18 +1,47 @@
 ﻿@page "/live-data"
+@rendermode InteractiveServer
+
+<h3>Live Bitcoin Prices</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Timestamp</th>
+            <th>BTC to EUR</th>
+            <th>BTC to CZK</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>@bitcoinData?.Timestamp.ToString("g")</td>
+            <td>@bitcoinData?.BtcToEur</td>
+            <td>@bitcoinData?.BtcToCzk</td>
+        </tr>
+    </tbody>
+</table>
+
 @using BitcoinRateWeb.Services
 
-@inject BitcoinService bitcoinService
-
-<h3>Live Bitcoin Price in CZK</h3>
-
-<p>Current BTC Price in CZK: @bitcoinPriceInCZK</p>
+@inject BitcoinDataService bitcoinService
 
 @code {
-    private decimal bitcoinPriceInCZK;
+    private BitcoinService.BitcoinServiceResponse bitcoinData = null;
 
     protected override async Task OnInitializedAsync()
     {
-        var bitCoinRate = await bitcoinService.GetBitcoinPriceInCZKAsync();
-        bitcoinPriceInCZK = bitCoinRate.BtcToCzk;
+        bitcoinService.OnBitcoinDataUpdated += HandleBitcoinDataUpdate;
+        bitcoinData = bitcoinService.LastResponse;
+    }
+
+    private void HandleBitcoinDataUpdate(BitcoinService.BitcoinServiceResponse data)
+    {
+        bitcoinData = data;
+        InvokeAsync(StateHasChanged);
+    }
+
+
+    public void Dispose()
+    {
+        bitcoinService.OnBitcoinDataUpdated -= HandleBitcoinDataUpdate;
     }
 }
